@@ -1,12 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+// https://www.npmjs.com/package/react-qr-reader
+// https://www.npmjs.com/package/qrcode.react
+
+import React from "react"
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { types } from "mobx-state-tree"
+import { activate, list, } from "./helpers"
+import { Checkbox, Text, } from "./elements"
+import { Add, Remove, } from "./actions"
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const Software = types.model({
+  tasks: types.map(types.model({
+    name: "",
+    done: false,
+  }).views(self => ({ get render() { return [
+    React.createElement(Checkbox, { item: self, leaf: "done", checked: self.done }  ),
+    React.createElement(Text, { item: self, leaf: "name", value: self.name } ),
+    React.createElement(Remove, { item: self }, "X"),
+  ] } })))
+}).views(self => ({ get render() { return [
+  React.createElement(Add, { to: self.tasks }, "Add Task"),
+  list(self.tasks),
+] } }))
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+activate(Software, window, "root")
