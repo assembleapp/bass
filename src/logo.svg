@@ -9,7 +9,7 @@ x y
 tells us to move the cursor to (x –., y .|)
 -->
 
-<path d="M 120 10 h 80 v 80 h -20 Z" />
+<path d="M 130 10 h 80 v 80 h -20 Z" />
 
 <path d="
 M
