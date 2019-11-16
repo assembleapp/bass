@@ -9,7 +9,6 @@ import ReactDOM                               from "react-dom"
 import { values }                             from "mobx"
 import { Observer }                           from "mobx-react"
 import { applyPatch, types }                  from "mobx-state-tree";
-import { asReduxStore, connectReduxDevtools } from "mst-middlewares"
 
 export const list = (items) => (
   values(items).map(item => (

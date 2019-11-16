@@ -10,7 +10,6 @@
     "mobx": "^5.10.1",
     "mobx-react": "^6.1.1",
     "mobx-state-tree": "^3.14.0",
-    "mst-middlewares": "^3.14.0",
     "processing-js": "^1.6.6",
     "react": "^16.8.6",
     "react-app-rewired": "^2.1.3",
