@@ -11,21 +11,31 @@ import { Observer }                           from "mobx-react"
 import { applyPatch, types }                  from "mobx-state-tree";
 
 export const list = (items) => (
-  values(items).map(item => (
-    React.createElement(Layout, { leaf: item }, [item.show])
+  values(items).map((item, index) => (
+    React.createElement(
+      Layout,
+      { leaf: item, key: `${item}-${index}` },
+      item.show,
+    )
   ))
 )
 
-// Use as:
-// activate(MobxStateTreeStore, window, "pane")
-export const activate = (memory, render, pane) => {
-  render.memory = memory.create()
+export const activate = (memory, render) => {
+
+  // move: observable library
+  memory.go = memory.create
+
+  render.memory = memory.go()
+  render.pane   = document.getElementById("pane")
 
   ReactDOM.render(
+
     <Observer>
       {() => render.memory.show}
     </Observer>,
-    document.getElementById("pane"),
+
+    render.pane,
+
   );
 }
 
@@ -70,38 +80,48 @@ export const Remove = styled.button.attrs(({ item }) => ({
   })
 }))``
 
-const Gaze = types
+
+export const Label = types
   .model({
-    tasks: types.map(
-      types
-        .model({
-          name: "",
-          done: false
-        })
-        .views(self => ({
-          get show() {
-            return [
-              React.createElement(Checkbox, {
-                item: self,
-                leaf: "done",
-                checked: self.done
-              }),
-              React.createElement(Text, {
-                item: self,
-                leaf: "name",
-                value: self.name
-              }),
-              React.createElement(Remove, { item: self }, "X")
-            ];
-          }
-        }))
-    )
+    name: "",
+    done: false
   })
   .views(self => ({
     get show() {
       return [
-        React.createElement(Add, { to: self.tasks }, "Add Task"),
-        list(self.tasks)
+
+        React.createElement(Checkbox, {
+          item: self,
+          leaf: "done",
+          checked: self.done,
+          key: "check",
+        }),
+
+        React.createElement(Text, {
+          item: self,
+          leaf: "name",
+          value: self.name,
+          key: "name",
+        }),
+
+        React.createElement(
+          Remove,
+          { item: self, key: "remove" },
+          "X",
+        )
+
+      ];
+    }
+  }))
+
+export const Gaze = types
+  .model({ labels: types.map(Label) })
+
+  .views(self => ({
+    get show() {
+      return [
+        React.createElement(Add, { to: self.labels }, "Add Label"),
+        list(self.labels)
       ];
     }
   }));
