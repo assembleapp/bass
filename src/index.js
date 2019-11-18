@@ -134,6 +134,11 @@ export const Gaze = types
   .views(self => ({
     get show() {
       return [
+        <svg viewbox="0 0 100 100">
+          <path d="M10 10 L 50 50" stroke="#550055" />
+          <rect x="1" y="1" w="99" h="99"  />
+          <text x="80" y="80">Hello</text>
+        </svg>,
         <pre>
           {JSON.stringify(self.toJSON(), null, 2)}
         </pre>,

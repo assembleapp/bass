@@ -44,5 +44,8 @@
   "devDependencies": {
     "prettier": "^1.19.1",
     "taiko": "^1.0.0"
+  },
+  "engines": {
+    "node": "13.1.0"
   }
 }
