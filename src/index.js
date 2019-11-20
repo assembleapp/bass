@@ -30,13 +30,14 @@ export const run = (memory, render) => {
 }
 
 export const list = (items) => (
-  values(items).map((item, index) => (
-    React.createElement(
-      Lay,
-      { leaf: item, key: `${item}-${index}` },
-      item.show,
-    )
-  ))
+  <div>
+    {values(items).map((item, index) => (
+      <Lay leaf={item} key={`${item}-${index}`}>
+        {item.show}
+      </Lay>
+    ))}
+    <Add to={items}>Add</Add>
+  </div>
 )
 
 export const Checkbox = styled.input.attrs(({ item, leaf }) => ({
@@ -94,19 +95,11 @@ export const Label = types
 
   .model({
     name: "",
-    done: false
   })
 
   .views(self => ({
     get show() {
       return [
-
-        React.createElement(Checkbox, {
-          item: self,
-          leaf: "done",
-          checked: self.done,
-          key: "check",
-        }),
 
         React.createElement(Text, {
           item: self,
@@ -134,27 +127,18 @@ export const Gaze = types
   .views(self => ({
     get show() {
       return [
-
         <svg viewbox="0 0 100 100">
           <path d="M0 0 h 100 v 100 h -100 V 70" stroke="#dd0dd0" fill="none" />
           <path d="M10 10 l 40 40" stroke="#550055" fill="none" />
 
           <text x="60" y="50">{(values(self.labels)[0] || {}).name}</text>
-
-          <path d="M10 10 L 40 40 v 20 l 10 10" stroke="#550055" fill="none" />
-
-          <text x="60" y="70">
-            {(values(self.labels)[0] || {}).done ? "finished" : "unfinished"}
-          </text>
         </svg>,
+
+        list(self.labels),
 
         <pre>
           {JSON.stringify(self.toJSON(), null, 2)}
         </pre>,
-
-        list(self.labels),
-
-        React.createElement(Add, { to: self.labels }, "Add Label"),
 
         <Frame src="/index.js" />
       ];
