@@ -32,7 +32,7 @@ export const run = (memory, render) => {
 export const list = (items) => (
   values(items).map((item, index) => (
     React.createElement(
-      Layout,
+      Lay,
       { leaf: item, key: `${item}-${index}` },
       item.show,
     )
@@ -48,7 +48,7 @@ export const Checkbox = styled.input.attrs(({ item, leaf }) => ({
   })
 }))``
 
-export const Layout = styled.div.attrs(({ leaf }) => ({
+export const Lay = styled.div.attrs(({ leaf }) => ({
   key: leaf.$treenode.path,
 }))`
   border: 1px solid #ffffaa;
@@ -134,18 +134,41 @@ export const Gaze = types
   .views(self => ({
     get show() {
       return [
+
         <svg viewbox="0 0 100 100">
-          <path d="M10 10 L 50 50" stroke="#550055" />
-          <rect x="1" y="1" w="99" h="99"  />
-          <text x="80" y="80">Hello</text>
+          <path d="M0 0 h 100 v 100 h -100 V 70" stroke="#dd0dd0" fill="none" />
+          <path d="M10 10 l 40 40" stroke="#550055" fill="none" />
+
+          <text x="60" y="50">{(values(self.labels)[0] || {}).name}</text>
+
+          <path d="M10 10 L 40 40 v 20 l 10 10" stroke="#550055" fill="none" />
+
+          <text x="60" y="70">
+            {(values(self.labels)[0] || {}).done ? "finished" : "unfinished"}
+          </text>
         </svg>,
+
         <pre>
           {JSON.stringify(self.toJSON(), null, 2)}
         </pre>,
+
         list(self.labels),
+
         React.createElement(Add, { to: self.labels }, "Add Label"),
+
+        <Frame src="/index.js" />
       ];
     }
   }));
+
+export const Frame = styled.iframe`
+display: block;
+position: absolute;
+height: 100vh;
+top: 0;
+bottom: 0;
+right: 0;
+width: 50vw;
+`
 
 run(Gaze, window);
