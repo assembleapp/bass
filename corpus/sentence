@@ -1,0 +1,14 @@
+====
+pair words
+====
+
+a sentence.
+
+----
+
+(source)
+  (sentence)
+    (words)
+      (word)
+      (word)
+    (pause)

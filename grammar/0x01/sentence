@@ -1,0 +1,1 @@
+seq(repeat(seq($.words, $.punctuation)), $._pause)

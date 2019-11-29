@@ -1,0 +1,5 @@
+choice(
+  prec(4, $.verb),
+
+  /[a-zA-Z-’]+?/,
+)

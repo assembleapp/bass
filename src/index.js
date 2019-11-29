@@ -1,21 +1,18 @@
 // https://www.npmjs.com/package/react-qr-reader
 // https://www.npmjs.com/package/qrcode.react
+// import Parser from "web-tree-sitter"
 
-import React                                  from "react";
+import React                 from "react";
 
-import styled                                 from "styled-components"
-import ReactDOM                               from "react-dom"
+import styled                from "styled-components"
+import ReactDOM              from "react-dom"
 
-import { values }                             from "mobx"
-import { Observer }                           from "mobx-react"
-import { applyPatch, types }                  from "mobx-state-tree";
+import { values }            from "mobx"
+import { Observer }          from "mobx-react"
+import { applyPatch, types } from "mobx-state-tree";
 
 export const run = (memory, render) => {
-
-  // move: observable library
-  memory.go = memory.create
-
-  render.memory = memory.go()
+  render.memory = memory.create()
   render.pane   = document.getElementById("pane")
 
   ReactDOM.render(
@@ -36,7 +33,7 @@ export const list = (items) => (
         {item.show}
       </Lay>
     ))}
-    <Add to={items}>Add</Add>
+    <New to={items}>New</New>
   </div>
 )
 
@@ -71,10 +68,10 @@ export const Text = styled.input.attrs(({ item, leaf }) => ({
   width: 6rem;
 `
 
-export const Add = styled.button.attrs(({ to }) => ({
+export const New = styled.button.attrs(({ to }) => ({
 
   onClick: () => applyPatch(window.memory, {
-    op: "add",
+    op: "New",
     path: `${to.$treenode.path}/${Math.random()}`,
     value: {},
   })
@@ -119,7 +116,6 @@ export const Label = types
   }))
 
 export const Gaze = types
-
   .model({
     labels: types.map(Label),
   })
@@ -127,32 +123,60 @@ export const Gaze = types
   .views(self => ({
     get show() {
       return [
-        <svg viewbox="0 0 100 100">
-          <path d="M0 0 h 100 v 100 h -100 V 70" stroke="#dd0dd0" fill="none" />
-          <path d="M10 10 l 40 40" stroke="#550055" fill="none" />
+        <Bay>
+          <Draw>
+            <path d="M0 0 h 100 v 100 h -100 V 70" stroke="#dd0dd0" fill="none" />
+            <path d="M10 20 l 40 40" stroke="#550055" fill="none" />
 
-          <text x="60" y="50">{(values(self.labels)[0] || {}).name}</text>
-        </svg>,
+            <text x="60" y="50">{(values(self.labels)[0] || {}).name}</text>
+          </Draw>
 
-        list(self.labels),
+          {list(self.labels)}
 
-        <pre>
-          {JSON.stringify(self.toJSON(), null, 2)}
-        </pre>,
+          <Frame src="/index.js" />
+        </Bay>,
 
-        <Frame src="/index.js" />
+        <Bay>
+          <Frame src="http://localhost:4567/focus" />
+          <Frame src="http://localhost:4567/analysis" />
+        </Bay>,
+
+        <Bay>
+          <Frame src="http://localhost:4567/corpus" />
+          <Frame src="http://localhost:4567/grammar" />
+        </Bay>,
       ];
     }
-  }));
+  }))
 
 export const Frame = styled.iframe`
 display: block;
-position: absolute;
-height: 100vh;
 top: 0;
 bottom: 0;
 right: 0;
 width: 50vw;
 `
 
-run(Gaze, window);
+export const Bay = styled.div`
+padding: 2rem;
+display: flex;
+flex-direction: row;
+flex: 0 1 100%;
+height: 50%;
+`
+
+const Draw = styled.svg.attrs({ viewBox: "0 0 100 100" })`
+height: 20rem;
+width: 20rem;
+`
+
+let go = async () => {
+  // console.log("fetching")
+  // fetch("http://localhost:4567/focus").then(() =>
+  // console.log("fetched")
+  // )
+  // let { value, done } = await response.body.text()
+
+  run(Gaze, window);
+}
+go()

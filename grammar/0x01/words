@@ -1,0 +1,6 @@
+repeat1(seq(
+  $.word,
+  optional($._blank),
+  optional($.punctuation),
+  optional($._blank),
+))
