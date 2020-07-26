@@ -1,4 +1,6 @@
+* go see <brew.sh>
 * brew install ruby node yarn
+* ruby pull.rb 1 1
 * brew cask install visual-studio-code
 * gem install sinatra sinatra-contrib
 * ruby go.rb &
@@ -8,7 +10,7 @@
 
 ## Archival search
 
-[volumes](https://uscode.house.gov/table3/table3statutesatlarge.htm)
+[books](https://uscode.house.gov/table3/table3statutesatlarge.htm)
 
 ```
   1    2    3    4    5                            9   10
@@ -27,81 +29,49 @@
 131  132  133
 ```
 
-`pull_volumes.rb`:
-
-```ruby
-volume = 34
-page = 619
-
-while true
-  filename = "volume-page.images/#{volume}-#{'%03d' % page}.png"
-  `curl https://uscode.house.gov/images/stat/#{volume}/#{page}.png > #{filename} 2> /dev/null`
-
-  contents = File.read(filename)
-  success = contents.length > 0
-
-  if success
-    puts "#{filename}: Success"
-    page += 1
-
-  elsif page == 1
-    puts "#{filename}: No volume"
-    `rm #{filename}`
-    exit
-
-  else
-    puts "#{filename}: End of volume"
-    `rm #{filename}`
-
-    volume += 1
-    page = 1
-  end
-end
-```
-
-`read_volumes.rb`:
+`read.rb`:
 
 ```ruby
 pending_images =
   Dir.
-  glob("volume-page.images/*").
+  glob("records.original.images/*").
   map {|f| File.basename(f) } -
   Dir.
-  glob("volume-page.words/*").
+  glob("records.original.phrases/*").
   map {|f| File.basename(f) }.
   map {|f| f.sub(/\.txt$/, '')}
 
 pending_images.sort.each do |pending_image|
   puts pending_image
-  `tesseract volume-page.images/#{pending_image} volume-page.words/#{pending_image}`
+  `tesseract records.original.images/#{pending_image} records.original.phrases/#{pending_image}`
 end
 ```
 
-`show_volumes.rb`
+`display.rb`
 
 ```ruby
 images = Dir.
-  glob("volume-page.images/*").
+  glob("records.original.images/*").
   map {|f| File.basename(f) }
 
-words = Dir.
-  glob("volume-page.words/*").
+phrases = Dir.
+  glob("records.original.phrases/*").
   map {|f| File.basename(f) }.
   map {|f| f.sub(/\.txt$/, '')}
 
-pending = images - words
+pending = images - phrases
 
-records = images + words
-volumes = records.map { |v| File.basename(v).match(/(\d+)-\d+/)[1] }.uniq.sort
+records = images + phrases
+names = records.map { |v| File.basename(v).match(/(\d+)-\d+/)[1] }.uniq.sort
 
-puts volumes.map { |volume|
-  pages = records.map { |v| match = File.basename(v).match(/#{volume}-(\d+)/); match ? match[1] : "0" }.uniq.sort
-  "#{volume}\t: #{pages.last.to_i.times.with_index.map { |i| (pages.include?('%03s' % i) || pages.include?('%04s' % i)) ? 'X' : '.'}.join}\n\n"
+puts names.map { |name|
+  pages = records.map { |v| match = File.basename(v).match(/#{name}-(\d+)/); match ? match[1] : "0" }.uniq.sort
+  "#{name}\t: #{pages.last.to_i.times.with_index.map { |i| (pages.include?('%03s' % i) || pages.include?('%04s' % i)) ? 'X' : '.'}.join}\n\n"
 }
 ```
 
 progress:
 
 ```bash
-> watch 'echo words:; ls volume-page.words/ | wc -l; echo images:; ls volume-page.images/ | wc -l'
+> watch 'echo phrases:; ls records.original.phrases/ | wc -l; echo images:; ls records.original.images/ | wc -l'
 ```
