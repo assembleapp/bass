@@ -1,6 +1,6 @@
-* go see <brew.sh>
+* go see [brew.sh](brew.sh)
 * brew install ruby node yarn
-* ruby pull.rb 1 1
+* ruby pull.rb /sompleace/on/local/machine/ 1 1
 * brew cask install visual-studio-code
 * gem install sinatra sinatra-contrib
 * ruby go.rb &
